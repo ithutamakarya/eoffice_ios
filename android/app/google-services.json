@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "596105610613",
+    "firebase_url": "https://eoffice-77bf0.firebaseio.com",
+    "project_id": "eoffice-77bf0",
+    "storage_bucket": "eoffice-77bf0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596105610613:android:975d7509a2bc64e4e67f3c",
+        "android_client_info": {
+          "package_name": "com.hutamakarya.eofficeIos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596105610613-mep9ep2n5rt7hhc62rgta33olk9bgham.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAID8FbcUk5zHIejbfvcGmB5k-X-ESX1gY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596105610613-mep9ep2n5rt7hhc62rgta33olk9bgham.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "596105610613-53o6up4eo59fl8un02jftftbn02i50bv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "space.dims.flutterhkiosv01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596105610613:android:cd97218ac7e5f7d1",
+        "android_client_info": {
+          "package_name": "space.dims.flutterhkapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596105610613-mep9ep2n5rt7hhc62rgta33olk9bgham.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAID8FbcUk5zHIejbfvcGmB5k-X-ESX1gY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596105610613-mep9ep2n5rt7hhc62rgta33olk9bgham.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "596105610613-53o6up4eo59fl8un02jftftbn02i50bv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "space.dims.flutterhkiosv01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
