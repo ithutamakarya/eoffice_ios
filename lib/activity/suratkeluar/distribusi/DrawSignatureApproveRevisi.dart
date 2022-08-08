@@ -141,13 +141,21 @@ class DrawSignatureApproveRevisiState extends State<DrawSignatureApproveRevisi>
           },
         ),
         FlatButton(
-          child: Text('Simpan'),
+          child: Text('Submit'),
           onPressed: () async {
-            ui.Image renderedImage = await signatureKey.currentState.rendered;
-            setState(() {
-              image = renderedImage;
-            });
-            showImage(context);
+            // ui.Image renderedImage = await signatureKey.currentState.rendered;
+            // setState(() {
+            //   image = renderedImage;
+            // });
+            // showImage(context);
+            Navigator.of(context, rootNavigator: true).pop();
+            UploadAll();
+            Navigator.of(context).pushAndRemoveUntil(
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      new HomeScreen(userNameUser, satkerLogin)),
+              (Route<dynamic> route) => false,
+            );
           },
         )
       ],
@@ -183,8 +191,8 @@ class DrawSignatureApproveRevisiState extends State<DrawSignatureApproveRevisi>
               new FlatButton(
                 child: new Text("Submit"),
                 onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
-                  UploadAll();
+                  // Navigator.of(context, rootNavigator: true).pop();
+                  // UploadAll();
                 },
               ),
               new FlatButton(
@@ -233,14 +241,17 @@ class DrawSignatureApproveRevisiState extends State<DrawSignatureApproveRevisi>
     pr.setMessage('Menunggu..');
     pr.show();
 
-    String base64Image = base64Encode(files.readAsBytesSync());
+    // String base64Image = base64Encode(files.readAsBytesSync());
 
-    Map dataSaveToken = {'token': loginToken, 'ttd': base64Image};
+    Map dataSaveToken = {
+      'token': loginToken,
+      'ttd': 'ttd',
+    };
 
     print("Approve rev");
 
     var urlSaveToken =
-        URL_EDIT_DISTRIBUSI_SURAT_UPDATE + dataId.toString() + "/approverev";
+        URL_EDIT_DISTRIBUSI_SURAT_UPDATE + dataId.toString() + "/approverevv2";
     http.post(
       urlSaveToken,
       body: dataSaveToken,
@@ -261,12 +272,11 @@ class DrawSignatureApproveRevisiState extends State<DrawSignatureApproveRevisi>
           DistribusiSuratState.refreshing();
           HomeScreenState.dialogNotif = "";
         });
-        // Navigator.of(context).push(new DistribusiSuratRoute());
-        Navigator.pushReplacement(
-            context,
-            new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    new HomeScreen(userNameUser, satkerLogin)));
+        // Navigator.pushReplacement(
+        //     context,
+        //     new MaterialPageRoute(
+        //         builder: (BuildContext context) =>
+        //             new HomeScreen(userNameUser, satkerLogin)));
       } else {
         pr.hide();
         _scaffoldKey.currentState.showSnackBar(SnackBar(

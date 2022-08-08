@@ -25,14 +25,16 @@ const directoryName = 'Download';
 
 class TrackingHistoriSuratKeluarRoute extends CupertinoPageRoute {
   TrackingHistoriSuratKeluarRoute()
-      : super(builder: (BuildContext context) => new TrackingHistoriSuratKeluar());
-
+      : super(
+            builder: (BuildContext context) =>
+                new TrackingHistoriSuratKeluar());
 
   // OPTIONAL IF YOU WISH TO HAVE SOME EXTRA ANIMATION WHILE ROUTING
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
-    return new FadeTransition(opacity: animation, child: new TrackingHistoriSuratKeluar());
+    return new FadeTransition(
+        opacity: animation, child: new TrackingHistoriSuratKeluar());
   }
 }
 
@@ -40,11 +42,12 @@ class TrackingHistoriSuratKeluar extends StatefulWidget {
   static const String routeName = "/TrackingHistoriSuratKeluar";
 
   @override
-  TrackingHistoriSuratKeluarState createState() => TrackingHistoriSuratKeluarState();
-
+  TrackingHistoriSuratKeluarState createState() =>
+      TrackingHistoriSuratKeluarState();
 }
 
-class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> with WidgetsBindingObserver {
+class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar>
+    with WidgetsBindingObserver {
   SharedPreferences sharedPreferences;
   String url;
   String loginToken;
@@ -63,7 +66,8 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
   static int refreshList = 0;
   static String query = "";
 
-  static RefreshController _refreshController = RefreshController(initialRefresh: false);
+  static RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   static bool rfrsh = true;
 
   String _platformVersion = 'Unknown';
@@ -78,16 +82,21 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
   }
 
   Future<TrackingSuratKeluarModel> makeRequest() async {
-
     sharedPreferences = await SharedPreferences.getInstance();
     loginToken = sharedPreferences.getString("loginToken");
 
-    final response =
-    await http.get(URL_DOMAIN + '/api/keluar/tracking?page=' + refreshList.toString() + '&q=' + query + '&token=' +loginToken);
+    final response = await http.get(URL_DOMAIN +
+        '/api/keluar/tracking?page=' +
+        refreshList.toString() +
+        '&q=' +
+        query +
+        '&token=' +
+        loginToken);
 
     if (response.statusCode == 200) {
       itemss.clear();
-      itemss.addAll(TrackingSuratKeluarModel.fromJson(jsonDecode(response.body)).trackingSuratKeluar);
+      itemss.addAll(TrackingSuratKeluarModel.fromJson(jsonDecode(response.body))
+          .trackingSuratKeluar);
       items.clear();
       items.addAll(itemss);
       if (!rfrsh) {
@@ -117,12 +126,9 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
   }
 
   @override
-  didPopRoute() {
-
-  }
+  didPopRoute() {}
 
   Future<File> createFileOfPdfUrl(String url) async {
-
     ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
     pr.setMessage('Menunggu..');
     pr.show();
@@ -131,18 +137,20 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File(dir+'/test.pdf');
+    File file = new File(dir + '/test.pdf');
     await file.writeAsBytes(bytes);
 
     String f = file.path;
 
     pr.hide();
 
-    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => new ShowPDF(f)));
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new ShowPDF(f)));
   }
 
   Future<File> downloadFileOfPdfUrl(String url) async {
-
     ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
     pr.setMessage('Downloading..');
     pr.show();
@@ -154,7 +162,7 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
     var request = await HttpClient().getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
-    if(!(await checkPermission())) await requestPermission();
+    if (!(await checkPermission())) await requestPermission();
     // Use plugin [path_provider] to export image to storage
     Directory directory = await getExternalStorageDirectory();
     String path = directory.path;
@@ -164,11 +172,15 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
     await file.writeAsBytes(bytes);
     String f = file.path;
     pr.hide();
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('File tersimpan pada folder download'), duration: Duration(seconds: 3),));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('File tersimpan pada folder download'),
+      duration: Duration(seconds: 3),
+    ));
   }
 
   requestPermission() async {
-    PermissionStatus result = await SimplePermissions.requestPermission(_permission);
+    PermissionStatus result =
+        await SimplePermissions.requestPermission(_permission);
     return result;
   }
 
@@ -183,226 +195,240 @@ class TrackingHistoriSuratKeluarState extends State<TrackingHistoriSuratKeluar> 
 
   @override
   Widget build(BuildContext context) {
-
     var formatter = new DateFormat('dd-MM-yyyy');
     final makeBody = Container(
         child: new FutureBuilder<TrackingSuratKeluarModel>(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          String noSurat;
 
-              String noSurat;
-
-              return new Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: BeautyTextfield(
-                          width: double.maxFinite,
-                          height: 40,
-                          backgroundColor: Colors.white,
-                          textColor: Colors.red,
-                          accentColor: Colors.red,
-                          duration: Duration(milliseconds: 300),
-                          inputType: TextInputType.text,
-                          prefixIcon: Icon(
-                            Icons.search,
-                          ),
-                          placeholder: "Cari",
-                          onChanged: (value) {
-
-                          },
-                          onSubmitted: (d) {
-                            setState(() {
-                              query = d.toString();
-                              _future = makeRequest();
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          header: WaterDropHeader(),
-                          footer: CustomFooter(
-                            builder: (BuildContext context,LoadStatus mode){
-                              Widget body ;
-                              if(mode==LoadStatus.idle){
-                                body =  Text("pull up load");
-                              }
-                              else if(mode==LoadStatus.loading){
-                                body =  CupertinoActivityIndicator();
-                              }
-                              else if(mode == LoadStatus.failed){
-                                body = Text("Load Failed!Click retry!");
-                              }
-                              else{
-                                body = Text("No more Data");
-                              }
-                              return Container(
-                                height: 55.0,
-                                child: Center(child:body),
-                              );
-                            },
-                          ),
-                          controller: _refreshController,
-                          onRefresh: () {
-                            setState(() {
-                              rfrsh = true;
-                              refreshList = 0;
-                              _future = makeRequest();
-                            });
-                          },
-                          onLoading: () {
-                            setState(() {
-                              rfrsh = false;
-                              refreshList = refreshList + 1;
-                              _future = makeRequest();
-                            });
-                          },
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: int.parse('${items.length}'),
-                            itemBuilder: (BuildContext context, int i) {
-                              if ('${items[i].no_surat}' == 'null') {
-                                noSurat = "-";
-                              } else {
-                                noSurat = '${items[i].no_surat}';
-                              }
-                              return new Card(
-                                elevation: 8.0,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                                child: Container(
-                                    child: new ListTile(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                                        leading: Container(
-                                            padding: EdgeInsets.only(right: 12.0),
-                                            decoration: new BoxDecoration(
-                                                border: new Border(
-                                                    right: new BorderSide(width: 2.0, color: Colors.deepPurpleAccent))
-                                            ),
-                                            child: new InkWell(
-                                              child: CircleAvatar(
-                                                  backgroundColor: Colors.greenAccent,
-                                                  radius: 16.0,
-                                                  child: new Icon(Icons.border_color, color: Colors.white, size: 16.0)
-                                              ),
-                                              onTap: () {
-                                                Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => new DetailTrackingSuratKeluarHistory('${items[i].id}')));
-                                              },
-                                            )
-                                        ),
-                                        title:
-                                        Column(
-                                          children: <Widget>[
-                                            new Row(
-                                              children: <Widget>[
-                                                new Icon(Icons.markunread_mailbox, color: Colors.purple, size: 16.0),
-                                                new Container(
-                                                  width: 10.0,
-                                                ),
-                                                Expanded(
-                                                    child: Text(noSurat, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0))
-                                                )
-                                              ],
-                                            ),
-                                            new Separators()
-                                          ],
-                                        ),
-                                        subtitle: Column(
-                                            children: <Widget> [
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Icon(Icons.arrow_forward, color: Colors.black, size: 16.0),
-                                                  new Container(
-                                                    width: 5.0,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text('${items[i].pembuat_awal.name}', style: TextStyle(color: Colors.green, fontSize: 11.0)),
-                                                  )
-                                                ],
-                                              ),
-                                              new Container(
-                                                height: 5.0,
-                                              ),
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Icon(Icons.event_note, color: Colors.purple, size: 16.0),
-                                                  new Container(
-                                                    width: 5.0,
-                                                  ),
-                                                  new Expanded(
-                                                    child: Text('${items[i].perihal}', style: TextStyle(color: Colors.red, fontSize: 11.0)),
-                                                  )
-                                                ],
-                                              )
-                                            ]
-                                        ),
-                                        trailing: Column(
-                                          children: <Widget>[
-                                            Text(formatter.format(DateTime.parse('${items[i].surat_at}')), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown, fontSize: 10.0)),
-                                            Expanded(
-                                              child: new IconButton(
-                                                  icon: const Icon(Icons.file_download, color: Colors.red, size: 20.0),
-                                                  onPressed: () {
-                                                    downloadFileOfPdfUrl('${items[i].versi_akhir}');
-                                                  }),
-                                            )
-                                          ],
-                                        ),
-                                        onTap: () async {
-                                          createFileOfPdfUrl('${items[i].versi_akhir}');
-                                        }
-                                    )
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      )
-                    ],
-                  );
-            } else if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
-            }
-            return new Center(
-              child: new Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new SizedBox(
-                    child: CircularProgressIndicator(),
-                    height: 20.0,
-                    width: 20.0,
-                  )
+          return new Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: BeautyTextfield(
+                  width: double.maxFinite,
+                  height: 40,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.red,
+                  accentColor: Colors.red,
+                  duration: Duration(milliseconds: 300),
+                  inputType: TextInputType.text,
+                  prefixIcon: Icon(
+                    Icons.search,
+                  ),
+                  placeholder: "Cari",
+                  onChanged: (value) {},
+                  onSubmitted: (d) {
+                    setState(() {
+                      query = d.toString();
+                      _future = makeRequest();
+                    });
+                  },
+                ),
               ),
-            );
-            // By default, show a loading spinner
-          },
-        )
-    );
+              Expanded(
+                  child: SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: true,
+                header: WaterDropHeader(),
+                footer: CustomFooter(
+                  builder: (BuildContext context, LoadStatus mode) {
+                    Widget body;
+                    if (mode == LoadStatus.idle) {
+                      body = Text("pull up load");
+                    } else if (mode == LoadStatus.loading) {
+                      body = CupertinoActivityIndicator();
+                    } else if (mode == LoadStatus.failed) {
+                      body = Text("Load Failed!Click retry!");
+                    } else {
+                      body = Text("No more Data");
+                    }
+                    return Container(
+                      height: 55.0,
+                      child: Center(child: body),
+                    );
+                  },
+                ),
+                controller: _refreshController,
+                onRefresh: () {
+                  setState(() {
+                    rfrsh = true;
+                    refreshList = 0;
+                    _future = makeRequest();
+                  });
+                },
+                onLoading: () {
+                  setState(() {
+                    rfrsh = false;
+                    refreshList = refreshList + 1;
+                    _future = makeRequest();
+                  });
+                },
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: int.parse('${items.length}'),
+                  itemBuilder: (BuildContext context, int i) {
+                    if ('${items[i].no_surat}' == 'null') {
+                      noSurat = "-";
+                    } else {
+                      noSurat = '${items[i].no_surat}';
+                    }
+                    return new Card(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      margin: new EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
+                      child: Container(
+                          child: new ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 5.0),
+                              leading: Container(
+                                  padding: EdgeInsets.only(right: 12.0),
+                                  decoration: new BoxDecoration(
+                                      border: new Border(
+                                          right: new BorderSide(
+                                              width: 2.0,
+                                              color: Colors.deepPurpleAccent))),
+                                  child: new InkWell(
+                                    child: CircleAvatar(
+                                        backgroundColor: Colors.greenAccent,
+                                        radius: 16.0,
+                                        child: new Icon(Icons.border_color,
+                                            color: Colors.white, size: 16.0)),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  new DetailTrackingSuratKeluarHistory(
+                                                      '${items[i].id}')));
+                                    },
+                                  )),
+                              title: Column(
+                                children: <Widget>[
+                                  new Row(
+                                    children: <Widget>[
+                                      new Icon(Icons.markunread_mailbox,
+                                          color: Colors.purple, size: 16.0),
+                                      new Container(
+                                        width: 10.0,
+                                      ),
+                                      Expanded(
+                                          child: Text(noSurat,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12.0)))
+                                    ],
+                                  ),
+                                  new Separators()
+                                ],
+                              ),
+                              subtitle: Column(children: <Widget>[
+                                new Row(
+                                  children: <Widget>[
+                                    new Icon(Icons.arrow_forward,
+                                        color: Colors.black, size: 16.0),
+                                    new Container(
+                                      width: 5.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                          '${items[i].pembuat_awal.name}',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 11.0)),
+                                    )
+                                  ],
+                                ),
+                                new Container(
+                                  height: 5.0,
+                                ),
+                                new Row(
+                                  children: <Widget>[
+                                    new Icon(Icons.event_note,
+                                        color: Colors.purple, size: 16.0),
+                                    new Container(
+                                      width: 5.0,
+                                    ),
+                                    new Expanded(
+                                      child: Text('${items[i].perihal}',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 11.0)),
+                                    )
+                                  ],
+                                )
+                              ]),
+                              trailing: Column(
+                                children: <Widget>[
+                                  Text(
+                                      formatter.format(DateTime.parse(
+                                          '${items[i].surat_at}')),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.brown,
+                                          fontSize: 10.0)),
+                                  // Expanded(
+                                  //   child: new IconButton(
+                                  //       icon: const Icon(Icons.file_download, color: Colors.red, size: 20.0),
+                                  //       onPressed: () {
+                                  //         downloadFileOfPdfUrl('${items[i].versi_akhir}');
+                                  //       }),
+                                  // )
+                                ],
+                              ),
+                              onTap: () async {
+                                createFileOfPdfUrl('${items[i].versi_akhir}');
+                              })),
+                    );
+                  },
+                ),
+              ))
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return new Text("${snapshot.error}");
+        }
+        return new Center(
+          child: new Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: new SizedBox(
+                child: CircularProgressIndicator(),
+                height: 20.0,
+                width: 20.0,
+              )),
+        );
+        // By default, show a loading spinner
+      },
+    ));
 
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-          iconTheme: new IconThemeData(color: Colors.red),
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/logohk.png',
-                fit: BoxFit.contain,
-                height: 40,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8.0), child: Text('Tracking/History', style: TextStyle(fontFamily: 'Source Code Pro', fontSize: 16.0, color: Colors.red)))
-            ],
-
-          ),
+        iconTheme: new IconThemeData(color: Colors.red),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/logohk.png',
+              fit: BoxFit.contain,
+              height: 40,
+            ),
+            Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Tracking/History',
+                    style: TextStyle(
+                        fontFamily: 'Source Code Pro',
+                        fontSize: 16.0,
+                        color: Colors.red)))
+          ],
+        ),
       ),
       body: makeBody,
     );
   }
-
 }

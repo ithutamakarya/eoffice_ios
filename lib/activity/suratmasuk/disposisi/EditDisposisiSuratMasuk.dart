@@ -781,29 +781,29 @@ class EditDisposisiSuratMasukState extends State<EditDisposisiSuratMasuk> {
                                                                         .path);
                                                           },
                                                         )),
-                                                        Padding(
-                                                          padding:
-                                                              new EdgeInsets
-                                                                      .only(
-                                                                  left: 10.0),
-                                                          child: new IconButton(
-                                                              icon: const Icon(
-                                                                  Icons
-                                                                      .file_download,
-                                                                  color: Colors
-                                                                      .red,
-                                                                  size: 30.0),
-                                                              onPressed: () {
-                                                                downloadFileOfPdfUrl(URL_DETAIL_SURAT_MASUK_PDF +
-                                                                    snapshot
-                                                                        .data
-                                                                        .disposisi
-                                                                        .masuk
-                                                                        .files[
-                                                                            i]
-                                                                        .path);
-                                                              }),
-                                                        )
+                                                        // Padding(
+                                                        //   padding:
+                                                        //       new EdgeInsets
+                                                        //               .only(
+                                                        //           left: 10.0),
+                                                        //   child: new IconButton(
+                                                        //       icon: const Icon(
+                                                        //           Icons
+                                                        //               .file_download,
+                                                        //           color: Colors
+                                                        //               .red,
+                                                        //           size: 30.0),
+                                                        //       onPressed: () {
+                                                        //         downloadFileOfPdfUrl(URL_DETAIL_SURAT_MASUK_PDF +
+                                                        //             snapshot
+                                                        //                 .data
+                                                        //                 .disposisi
+                                                        //                 .masuk
+                                                        //                 .files[
+                                                        //                     i]
+                                                        //                 .path);
+                                                        //       }),
+                                                        // )
                                                       ],
                                                     ),
                                                   );

@@ -497,149 +497,156 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text("Notifikasi"),
-                                  content: ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    itemCount: int.parse(
-                                        '${dashNotif.listnotif.length}'),
-                                    itemBuilder: (BuildContext context, int i) {
-                                      return new Card(
-                                        elevation: 8.0,
-                                        margin: new EdgeInsets.symmetric(
-                                            horizontal: 5.0, vertical: 6.0),
-                                        child: Container(
-                                            child: new ListTile(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 5.0,
-                                                        vertical: 5.0),
-                                                title: Column(
-                                                  children: <Widget>[
+                                  content: SizedBox(
+                                    height: 200,
+                                    width: 100,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      itemCount: int.parse(
+                                          '${dashNotif.listnotif.length}'),
+                                      itemBuilder:
+                                          (BuildContext context, int i) {
+                                        return new Card(
+                                          elevation: 8.0,
+                                          margin: new EdgeInsets.symmetric(
+                                              horizontal: 5.0, vertical: 6.0),
+                                          child: Container(
+                                              child: new ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 5.0,
+                                                          vertical: 5.0),
+                                                  title: Column(
+                                                    children: <Widget>[
+                                                      new Row(
+                                                        children: <Widget>[
+                                                          new Icon(
+                                                              Icons
+                                                                  .markunread_mailbox,
+                                                              color:
+                                                                  Colors.purple,
+                                                              size: 16.0),
+                                                          new Container(
+                                                            width: 10.0,
+                                                          ),
+                                                          new Expanded(
+                                                              child: Text(
+                                                                  '${dashNotif.listnotif[i].judul}',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          10.0)))
+                                                        ],
+                                                      ),
+                                                      new Separators(),
+                                                    ],
+                                                  ),
+                                                  subtitle:
+                                                      Column(children: <Widget>[
                                                     new Row(
                                                       children: <Widget>[
-                                                        new Icon(
-                                                            Icons
-                                                                .markunread_mailbox,
-                                                            color:
-                                                                Colors.purple,
-                                                            size: 16.0),
-                                                        new Container(
-                                                          width: 10.0,
-                                                        ),
-                                                        new Expanded(
+                                                        Expanded(
                                                             child: Text(
-                                                                '${dashNotif.listnotif[i].judul}',
+                                                                '${dashNotif.listnotif[i].perihal}',
                                                                 style: TextStyle(
                                                                     color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                        .green,
                                                                     fontSize:
                                                                         10.0)))
                                                       ],
                                                     ),
-                                                    new Separators(),
-                                                  ],
-                                                ),
-                                                subtitle:
-                                                    Column(children: <Widget>[
-                                                  new Row(
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                          child: Text(
-                                                              '${dashNotif.listnotif[i].perihal}',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .green,
-                                                                  fontSize:
-                                                                      10.0)))
-                                                    ],
-                                                  ),
-                                                ]),
-                                                onTap: () async {
-                                                  setState(() {
-                                                    _futureNotif =
-                                                        makeRequestNotif();
-                                                  });
-                                                  if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "0") {
-                                                    _scaffoldKey.currentState
-                                                        .showSnackBar(SnackBar(
-                                                            content: Text(
-                                                                'Hanya bisa dibuka di web'),
-                                                            duration: Duration(
-                                                                seconds: 3)));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "1") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new EditDisposisiSuratMasukNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "2") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new EditDistribusiSuratKeluarNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "3") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new DetailTrackingHistoryNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "4") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new DetailTrackingSuratKeluarHistoryNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "5") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new EditMemoMasukNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  } else if ('${dashNotif.listnotif[i].masukke}' ==
-                                                      "6") {
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        new MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                new DetailMemoMasukNotif(
-                                                                    '${dashNotif.listnotif[i].id}',
-                                                                    '${dashNotif.listnotif[i].disposisiid}')));
-                                                  }
-                                                })),
-                                      );
-                                    },
+                                                  ]),
+                                                  onTap: () async {
+                                                    setState(() {
+                                                      _futureNotif =
+                                                          makeRequestNotif();
+                                                    });
+                                                    if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "0") {
+                                                      _scaffoldKey.currentState
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(
+                                                                  'Hanya bisa dibuka di web'),
+                                                              duration:
+                                                                  Duration(
+                                                                      seconds:
+                                                                          3)));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "1") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new EditDisposisiSuratMasukNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "2") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new EditDistribusiSuratKeluarNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "3") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new DetailTrackingHistoryNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "4") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new DetailTrackingSuratKeluarHistoryNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "5") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new EditMemoMasukNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    } else if ('${dashNotif.listnotif[i].masukke}' ==
+                                                        "6") {
+                                                      Navigator.pop(context);
+                                                      Navigator.push(
+                                                          context,
+                                                          new MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  new DetailMemoMasukNotif(
+                                                                      '${dashNotif.listnotif[i].id}',
+                                                                      '${dashNotif.listnotif[i].disposisiid}')));
+                                                    }
+                                                  })),
+                                        );
+                                      },
+                                    ),
                                   ),
                                   actions: <Widget>[
                                     FlatButton(

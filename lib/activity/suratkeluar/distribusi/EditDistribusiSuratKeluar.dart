@@ -47,6 +47,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
   SharedPreferences sharedPreferences;
   String url;
   String loginToken;
+  String satkerLogin, userNameUser;
 
   TextEditingController _catatanController = TextEditingController();
 
@@ -62,6 +63,9 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
   Permission _permission = Permission.WriteExternalStorage;
   String filePath;
 
+  String _pilihan;
+  String pilihanSign;
+
   @override
   initState() {
     super.initState();
@@ -71,6 +75,8 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
   Future<EditDistribusiSuratKeluarModel> makeRequest() async {
     sharedPreferences = await SharedPreferences.getInstance();
     loginToken = sharedPreferences.getString("loginToken");
+    satkerLogin = sharedPreferences.getString("satker");
+    userNameUser = sharedPreferences.getString("userNameUser");
     idUser = sharedPreferences.getInt("idUser");
 
     final response = await http.get(
@@ -302,7 +308,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              Approve();
+                                              approveV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -332,7 +338,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              Approve();
+                                              approveV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -438,7 +444,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              Approve();
+                                              approveV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -469,7 +475,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              Approve();
+                                              approveV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -576,7 +582,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              ApproveRevisi();
+                                              approveRevisiV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -607,7 +613,7 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                               vertical: 16.0),
                                           child: new InkWell(
                                             onTap: () {
-                                              ApproveRevisi();
+                                              approveRevisiV2();
                                             },
                                             child: new Container(
                                                 height: 42.0,
@@ -1187,29 +1193,29 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
                                                             },
                                                           ),
                                                         ),
-                                                        Padding(
-                                                          padding:
-                                                              new EdgeInsets
-                                                                      .only(
-                                                                  left: 10.0),
-                                                          child: new IconButton(
-                                                              icon: const Icon(
-                                                                  Icons
-                                                                      .file_download,
-                                                                  color: Colors
-                                                                      .red,
-                                                                  size: 30.0),
-                                                              onPressed: () {
-                                                                downloadFileOfPdfUrl(URL_EDIT_DISTRIBUSI_SURAT_PDF +
-                                                                    snapshot
-                                                                        .data
-                                                                        .dis
-                                                                        .keluar
-                                                                        .json_pdf[
-                                                                            i]
-                                                                        .path);
-                                                              }),
-                                                        )
+                                                        // Padding(
+                                                        //   padding:
+                                                        //       new EdgeInsets
+                                                        //               .only(
+                                                        //           left: 10.0),
+                                                        //   child: new IconButton(
+                                                        //       icon: const Icon(
+                                                        //           Icons
+                                                        //               .file_download,
+                                                        //           color: Colors
+                                                        //               .red,
+                                                        //           size: 30.0),
+                                                        //       onPressed: () {
+                                                        //         downloadFileOfPdfUrl(URL_EDIT_DISTRIBUSI_SURAT_PDF +
+                                                        //             snapshot
+                                                        //                 .data
+                                                        //                 .dis
+                                                        //                 .keluar
+                                                        //                 .json_pdf[
+                                                        //                     i]
+                                                        //                 .path);
+                                                        //       }),
+                                                        // )
                                                       ],
                                                     ),
                                                   );
@@ -1354,6 +1360,252 @@ class EditDistribusiSuratKeluarState extends State<EditDistribusiSuratKeluar> {
         new MaterialPageRoute(
             builder: (BuildContext context) => new DrawSignatureApproveRevisi(
                 dataId, _catatanController.text)));
+  }
+
+  approveV2() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Apakah Anda menyetujui surat ini ?"),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('Tanda Tangan'),
+                    leading: Radio<String>(
+                      value: "ttd",
+                      groupValue: _pilihan,
+                      onChanged: (String value) {
+                        setState(() {
+                          _pilihan = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Paraf'),
+                    leading: Radio<String>(
+                      value: "paraf",
+                      groupValue: _pilihan,
+                      onChanged: (String value) {
+                        setState(() {
+                          _pilihan = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            new TextButton(
+              child: new Text(
+                "Tutup",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new TextButton(
+              child: new Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  pilihanSign = _pilihan;
+                });
+                signSuratKeluar();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  approveRevisiV2() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Approve oleh Pemeriksa"),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('Tanda Tangan'),
+                    leading: Radio<String>(
+                      value: "ttd",
+                      groupValue: _pilihan,
+                      onChanged: (String value) {
+                        setState(() {
+                          _pilihan = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Paraf'),
+                    leading: Radio<String>(
+                      value: "paraf",
+                      groupValue: _pilihan,
+                      onChanged: (String value) {
+                        setState(() {
+                          _pilihan = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            new TextButton(
+              child: new Text(
+                "Tutup",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new TextButton(
+              child: new Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  pilihanSign = _pilihan;
+                });
+                signSuratKeluarRev();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void signSuratKeluar() {
+    ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
+    pr.setMessage('Menunggu..');
+    pr.show();
+
+    Map dataSaveToken = {
+      'token': loginToken,
+      'ttd': pilihanSign,
+    };
+
+    print("Approve app");
+
+    var urlSaveToken =
+        URL_EDIT_DISTRIBUSI_SURAT_UPDATE + dataId.toString() + "/approvev2";
+    http.post(
+      urlSaveToken,
+      body: dataSaveToken,
+      headers: {
+        'Accept-Language': 'id',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+      },
+    ).then((response) {
+      final data = json.decode(response.body);
+      bool successSaveToken = data['success'];
+
+      if (successSaveToken) {
+        pr.hide();
+        setState(() {
+          DistribusiSuratState.refreshing();
+          HomeScreenState.dialogNotif = "";
+        });
+        Navigator.of(context).pushAndRemoveUntil(
+          new MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  new HomeScreen(userNameUser, satkerLogin)),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        pr.hide();
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Approve Gagal'),
+          duration: Duration(seconds: 3),
+        ));
+      }
+    });
+  }
+
+  void signSuratKeluarRev() {
+    ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
+    pr.setMessage('Menunggu..');
+    pr.show();
+
+    Map dataSaveToken = {
+      'token': loginToken,
+      'ttd': pilihanSign,
+    };
+
+    print("Approve rev");
+
+    var urlSaveToken =
+        URL_EDIT_DISTRIBUSI_SURAT_UPDATE + dataId.toString() + "/approverevv2";
+    http.post(
+      urlSaveToken,
+      body: dataSaveToken,
+      headers: {
+        'Accept-Language': 'id',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+      },
+    ).then((response) {
+      final data = json.decode(response.body);
+      bool successSaveToken = data['success'];
+
+      if (successSaveToken) {
+        pr.hide();
+        setState(() {
+          DistribusiSuratState.refreshing();
+          HomeScreenState.dialogNotif = "";
+        });
+        Navigator.of(context).pushAndRemoveUntil(
+          new MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  new HomeScreen(userNameUser, satkerLogin)),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        pr.hide();
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Approve Gagal'),
+          duration: Duration(seconds: 3),
+        ));
+      }
+    });
   }
 }
 

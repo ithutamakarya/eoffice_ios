@@ -26,7 +26,6 @@ class SuratKeluarRoute extends CupertinoPageRoute {
   SuratKeluarRoute()
       : super(builder: (BuildContext context) => new SuratKeluar());
 
-
   // OPTIONAL IF YOU WISH TO HAVE SOME EXTRA ANIMATION WHILE ROUTING
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
@@ -40,7 +39,6 @@ class SuratKeluar extends StatefulWidget {
 
   @override
   SuratKeluarState createState() => SuratKeluarState();
-
 }
 
 class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
@@ -62,7 +60,8 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
   static int refreshList = 0;
   static String query = "";
 
-  static RefreshController _refreshController = RefreshController(initialRefresh: false);
+  static RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   static bool rfrsh = true;
 
   String _platformVersion = 'Unknown';
@@ -79,12 +78,18 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
     sharedPreferences = await SharedPreferences.getInstance();
     loginToken = sharedPreferences.getString("loginToken");
 
-    final response =
-    await http.get(URL_DOMAIN + '/api/keluar?page=' + refreshList.toString() + '&q=' + query + '&token=' + loginToken);
+    final response = await http.get(URL_DOMAIN +
+        '/api/keluar?page=' +
+        refreshList.toString() +
+        '&q=' +
+        query +
+        '&token=' +
+        loginToken);
 
     if (response.statusCode == 200) {
       itemss.clear();
-      itemss.addAll(SuratKeluarModel.fromJson(jsonDecode(response.body)).suratKeluar);
+      itemss.addAll(
+          SuratKeluarModel.fromJson(jsonDecode(response.body)).suratKeluar);
       items.clear();
       items.addAll(itemss);
 
@@ -96,7 +101,6 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
 
       return SuratKeluarModel.fromJson(jsonDecode(response.body));
     } else {
-
       if (!rfrsh) {
         _refreshController.loadComplete();
       } else {
@@ -118,12 +122,9 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
   }
 
   @override
-  didPopRoute() {
-
-  }
+  didPopRoute() {}
 
   Future<File> createFileOfPdfUrl(String url) async {
-
     ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
     pr.setMessage('Menunggu..');
     pr.show();
@@ -132,18 +133,20 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File(dir+'/test.pdf');
+    File file = new File(dir + '/test.pdf');
     await file.writeAsBytes(bytes);
 
     String f = file.path;
 
     pr.hide();
 
-    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => new ShowPDF(f)));
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new ShowPDF(f)));
   }
 
   Future<File> downloadFileOfPdfUrl(String url) async {
-
     ProgressDialog pr = new ProgressDialog(context, ProgressDialogType.Normal);
     pr.setMessage('Downloading..');
     pr.show();
@@ -155,7 +158,7 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
     var request = await HttpClient().getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
-    if(!(await checkPermission())) await requestPermission();
+    if (!(await checkPermission())) await requestPermission();
     // Use plugin [path_provider] to export image to storage
     Directory directory = await getExternalStorageDirectory();
     String path = directory.path;
@@ -165,11 +168,15 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
     await file.writeAsBytes(bytes);
     String f = file.path;
     pr.hide();
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('File tersimpan pada folder download'), duration: Duration(seconds: 3),));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('File tersimpan pada folder download'),
+      duration: Duration(seconds: 3),
+    ));
   }
 
   requestPermission() async {
-    PermissionStatus result = await SimplePermissions.requestPermission(_permission);
+    PermissionStatus result =
+        await SimplePermissions.requestPermission(_permission);
     return result;
   }
 
@@ -188,210 +195,220 @@ class SuratKeluarState extends State<SuratKeluar> with WidgetsBindingObserver {
 
     final makeBody = Container(
         child: new FutureBuilder<SuratKeluarModel>(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return new Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: BeautyTextfield(
-                          width: double.maxFinite,
-                          height: 40,
-                          backgroundColor: Colors.white,
-                          textColor: Colors.red,
-                          accentColor: Colors.red,
-                          duration: Duration(milliseconds: 300),
-                          inputType: TextInputType.text,
-                          prefixIcon: Icon(
-                            Icons.search,
-                          ),
-                          placeholder: "Cari",
-                          onChanged: (value) {
-
-                          },
-                          onSubmitted: (d) {
-                            setState(() {
-                              query = d.toString();
-                              _future = makeRequest();
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          header: WaterDropHeader(),
-                          footer: CustomFooter(
-                            builder: (BuildContext context,LoadStatus mode){
-                              Widget body ;
-                              if(mode==LoadStatus.idle){
-                                body =  Text("pull up load");
-                              }
-                              else if(mode==LoadStatus.loading){
-                                body =  CupertinoActivityIndicator();
-                              }
-                              else if(mode == LoadStatus.failed){
-                                body = Text("Load Failed!Click retry!");
-                              }
-                              else{
-                                body = Text("No more Data");
-                              }
-                              return Container(
-                                height: 55.0,
-                                child: Center(child:body),
-                              );
-                            },
-                          ),
-                          controller: _refreshController,
-                          onRefresh: () {
-                            setState(() {
-                              rfrsh = true;
-                              refreshList = 0;
-                              _future = makeRequest();
-                            });
-                          },
-                          onLoading: () {
-                            setState(() {
-                              rfrsh = false;
-                              refreshList = refreshList + 1;
-                              _future = makeRequest();
-                            });
-                          },
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: int.parse('${items.length}'),
-                            itemBuilder: (BuildContext context, int i) {
-                              var codeOrdner;
-                              if ('${items[i].code}' == 'null') {
-                                codeOrdner = "-";
-                              } else {
-                                codeOrdner = '${items[i].code}';
-                              }
-                              return new Card(
-                                elevation: 8.0,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                                child: Container(
-                                    child: new ListTile(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                                        leading: Container(
-                                            padding: EdgeInsets.only(right: 12.0),
-                                            decoration: new BoxDecoration(
-                                                border: new Border(
-                                                    right: new BorderSide(width: 2.0, color: Colors.deepPurpleAccent))
-                                            ),
-                                            child: new InkWell(
-                                              child: CircleAvatar(
-                                                  backgroundColor: Colors.greenAccent,
-                                                  radius: 16.0,
-                                                  child: new Icon(Icons.file_download, color: Colors.white, size: 16.0)
-                                              ),
-                                              onTap: () {
-                                                downloadFileOfPdfUrl('${items[i].versi_akhir}');
-                                              },
-                                            )
-                                        ),
-                                        title:
-                                        Column(
-                                          children: <Widget>[
-                                            new Row(
-                                              children: <Widget>[
-                                                new Icon(Icons.mail, color: Colors.purple, size: 16.0),
-                                                new Container(
-                                                  width: 10.0,
-                                                ),
-                                                new Expanded(
-                                                    child: Text('${items[i].no_surat}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0))
-                                                )
-                                              ],
-                                            ),
-                                            new Separators()
-                                          ],
-                                        ),
-                                        subtitle: Column(
-                                            children: <Widget> [
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Icon(Icons.arrow_forward, color: Colors.black, size: 16.0),
-                                                  new Container(
-                                                    width: 5.0,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text('${items[i].kepada}', style: TextStyle(color: Colors.green, fontSize: 11.0)),
-                                                  )
-                                                ],
-                                              ),
-                                              new Container(
-                                                height: 5.0,
-                                              ),
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Icon(Icons.event_note, color: Colors.purple, size: 16.0),
-                                                  new Container(
-                                                    width: 5.0,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(codeOrdner, style: TextStyle(color: Colors.red, fontSize: 11.0)),
-                                                  )
-                                                ],
-                                              )
-                                            ]
-                                        ),
-                                        trailing:
-                                        Text(formatter.format(DateTime.parse('${items[i].surat_at}')), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown, fontSize: 10.0)),
-                                        onTap: () async {
-                                          createFileOfPdfUrl('${items[i].versi_akhir}');
-                                        }
-                                    )
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      )
-                    ],
-                  );
-            } else if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
-            }
-            return new Center(
-              child: new Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new SizedBox(
-                    child: CircularProgressIndicator(),
-                    height: 20.0,
-                    width: 20.0,
-                  )
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return new Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: BeautyTextfield(
+                  width: double.maxFinite,
+                  height: 40,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.red,
+                  accentColor: Colors.red,
+                  duration: Duration(milliseconds: 300),
+                  inputType: TextInputType.text,
+                  prefixIcon: Icon(
+                    Icons.search,
+                  ),
+                  placeholder: "Cari",
+                  onChanged: (value) {},
+                  onSubmitted: (d) {
+                    setState(() {
+                      query = d.toString();
+                      _future = makeRequest();
+                    });
+                  },
+                ),
               ),
-            );
-            // By default, show a loading spinner
-          },
-        )
-    );
+              Expanded(
+                  child: SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: true,
+                header: WaterDropHeader(),
+                footer: CustomFooter(
+                  builder: (BuildContext context, LoadStatus mode) {
+                    Widget body;
+                    if (mode == LoadStatus.idle) {
+                      body = Text("pull up load");
+                    } else if (mode == LoadStatus.loading) {
+                      body = CupertinoActivityIndicator();
+                    } else if (mode == LoadStatus.failed) {
+                      body = Text("Load Failed!Click retry!");
+                    } else {
+                      body = Text("No more Data");
+                    }
+                    return Container(
+                      height: 55.0,
+                      child: Center(child: body),
+                    );
+                  },
+                ),
+                controller: _refreshController,
+                onRefresh: () {
+                  setState(() {
+                    rfrsh = true;
+                    refreshList = 0;
+                    _future = makeRequest();
+                  });
+                },
+                onLoading: () {
+                  setState(() {
+                    rfrsh = false;
+                    refreshList = refreshList + 1;
+                    _future = makeRequest();
+                  });
+                },
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: int.parse('${items.length}'),
+                  itemBuilder: (BuildContext context, int i) {
+                    var codeOrdner;
+                    if ('${items[i].code}' == 'null') {
+                      codeOrdner = "-";
+                    } else {
+                      codeOrdner = '${items[i].code}';
+                    }
+                    return new Card(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      margin: new EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
+                      child: Container(
+                          child: new ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 5.0),
+                              leading: Container(
+                                  padding: EdgeInsets.only(right: 12.0),
+                                  decoration: new BoxDecoration(
+                                      border: new Border(
+                                          right: new BorderSide(
+                                              width: 2.0,
+                                              color: Colors.deepPurpleAccent))),
+                                  child: new InkWell(
+                                    child: CircleAvatar(
+                                        backgroundColor: Colors.greenAccent,
+                                        radius: 16.0,
+                                        child: new Icon(Icons.file_download,
+                                            color: Colors.white, size: 16.0)),
+                                    onTap: () {
+                                      createFileOfPdfUrl(
+                                          '${items[i].versi_akhir}');
+                                    },
+                                  )),
+                              title: Column(
+                                children: <Widget>[
+                                  new Row(
+                                    children: <Widget>[
+                                      new Icon(Icons.mail,
+                                          color: Colors.purple, size: 16.0),
+                                      new Container(
+                                        width: 10.0,
+                                      ),
+                                      new Expanded(
+                                          child: Text('${items[i].no_surat}',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12.0)))
+                                    ],
+                                  ),
+                                  new Separators()
+                                ],
+                              ),
+                              subtitle: Column(children: <Widget>[
+                                new Row(
+                                  children: <Widget>[
+                                    new Icon(Icons.arrow_forward,
+                                        color: Colors.black, size: 16.0),
+                                    new Container(
+                                      width: 5.0,
+                                    ),
+                                    Expanded(
+                                      child: Text('${items[i].kepada}',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 11.0)),
+                                    )
+                                  ],
+                                ),
+                                new Container(
+                                  height: 5.0,
+                                ),
+                                new Row(
+                                  children: <Widget>[
+                                    new Icon(Icons.event_note,
+                                        color: Colors.purple, size: 16.0),
+                                    new Container(
+                                      width: 5.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(codeOrdner,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 11.0)),
+                                    )
+                                  ],
+                                )
+                              ]),
+                              trailing: Text(
+                                  formatter.format(
+                                      DateTime.parse('${items[i].surat_at}')),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.brown,
+                                      fontSize: 10.0)),
+                              onTap: () async {
+                                createFileOfPdfUrl('${items[i].versi_akhir}');
+                              })),
+                    );
+                  },
+                ),
+              ))
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return new Text("${snapshot.error}");
+        }
+        return new Center(
+          child: new Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: new SizedBox(
+                child: CircularProgressIndicator(),
+                height: 20.0,
+                width: 20.0,
+              )),
+        );
+        // By default, show a loading spinner
+      },
+    ));
 
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-          iconTheme: new IconThemeData(color: Colors.red),
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/logohk.png',
-                fit: BoxFit.contain,
-                height: 40,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8.0), child: Text('Surat Keluar', style: TextStyle(fontFamily: 'Source Code Pro', fontSize: 16.0, color: Colors.red)))
-            ],
-
-          ),
+        iconTheme: new IconThemeData(color: Colors.red),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/logohk.png',
+              fit: BoxFit.contain,
+              height: 40,
+            ),
+            Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Surat Keluar',
+                    style: TextStyle(
+                        fontFamily: 'Source Code Pro',
+                        fontSize: 16.0,
+                        color: Colors.red)))
+          ],
+        ),
       ),
       body: makeBody,
     );
   }
-
 }
